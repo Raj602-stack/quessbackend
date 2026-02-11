@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: hrms
+      POSTGRES_USER: hrmsuser
+      POSTGRES_PASSWORD: hrmspassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    command: ./entrypoint.sh
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: super-secret-key
+      DEBUG: "True"
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      DATABASE_URL: postgres://hrmsuser:hrmspassword@db:5432/hrms
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
