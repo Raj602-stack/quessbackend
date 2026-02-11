@@ -3,30 +3,25 @@
 echo "Applying migrations..."
 python manage.py migrate --noinput
 
-echo "Creating superuser if not exists..."
+echo "Ensuring superuser exists (hardcoded test)..."
 
 python manage.py shell << END
-import os
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-username = os.environ.get("DJANGO_SUPERUSER_USERNAME")
-email = os.environ.get("DJANGO_SUPERUSER_EMAIL")
-password = os.environ.get("DJANGO_SUPERUSER_PASSWORD")
+username = "admin"
+email = "admin@example.com"
+password = "12345"
 
-print("DEBUG -> USERNAME:", username)
-print("DEBUG -> EMAIL:", email)
-print("DEBUG -> PASSWORD SET:", bool(password))
+user, created = User.objects.get_or_create(username=username, defaults={"email": email})
 
-if username and password:
-    if not User.objects.filter(username=username).exists():
-        User.objects.create_superuser(username=username, email=email, password=password)
-        print("Superuser created.")
-    else:
-        print("Superuser already exists.")
-else:
-    print("Superuser environment variables missing!")
+user.set_password(password)
+user.is_superuser = True
+user.is_staff = True
+user.save()
+
+print("Superuser ensured (hardcoded).")
 END
 
 echo "Collecting static files..."
