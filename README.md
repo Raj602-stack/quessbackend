@@ -81,3 +81,9 @@ url:- https://splendid-wholeness-production-ecb0.up.railway.app
 - Enforces uniqueness on employee_id and email.
 - Prevents duplicate attendance per employee per date.
 - Dockerized for easy deployment.
+
+
+##  cmds to get started on your local
+
+cd backend
+docker compose up --build 
